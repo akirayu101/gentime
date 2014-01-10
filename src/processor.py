@@ -14,16 +14,14 @@ class line_processor():
     def line_process(self,text):
         for operator in self.operators:
             noerr,text = operator(text,self.lang)
-            if noerr:
-                print 'noerr'
-                return text
-        return None
+            if not noerr:
+                return None
+        return text
     def process(self):
         with open(self.infile) as inf,open(self.outfile,'wb') as of:
             for line in inf:
                 text = self.line_process(line.strip())
                 if text:
-                    print 'write'
                     of.write(text+'\n')
 
 
