@@ -64,11 +64,13 @@ def stem_extractor(text,lang):
 #out newstem \t query \t freq
 def sed_operator(text,lang):
     sed_dict = getattr(process_dict,lang+'_sed_dict')
+    #dict key: sub_pattern value: replace_term
+    
     [stem_query,query,freq] = text.strip().split('\t')
     for sed in sed_dict:
         sed_compiler = re.compile(sed)
         if sed_compiler.search(stem_query):
-            sed_compiler.sub(sed_dict[sed],stem_query)
+            stem_query = sed_compiler.sub(sed_dict[sed],stem_query)
             return True,'\t'.join([stem_query,query,freq])+'\n'
     return True,text
 
