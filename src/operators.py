@@ -1,11 +1,12 @@
 #coding=utf-8
 import process_dict
 import copy
+import re
 
-//过滤器operator
-//返回bool
-//in query freq
-//out query freq
+#过滤器operator
+#返回bool
+#in  query freq
+#out query freq
 def error_format_filter(text,lang):
     if len(text.split('\t')) == 2:
         try:
@@ -40,24 +41,34 @@ def prefix_filter(text,lang):
     return False,text
 
 
-//主干提取operator
-//全返回true和text
+#主干提取operator
+#全返回true和text
 
-//in query \t freq
-//out query \t stem \t freq
+#in  query \t freq
+#out stem \t query \t freq
 
 def stem_extractor(text,lang):
     stem_dict = getattr(process_dict,lang+'_stem_dict')
     [query,freq] = text.strip().split('\t')
-    zhugan = copy.deepcopy(query)
-
     for stem in stem_dict:
         stem_index = query.find(stem)
         if stem_index != -1:
-            zhugan = copy.deepcopy(query)
-            query[stem_index,stem_index+len(stem)] = ''
-            return True,'\t'.join([zhugan,query,freq])+'\n'
-    //impossible to reach this
+            stem_query = query[:stem_index] + query[stem_index+len(stem):]
+            return True,'\t'.join([stem_query,query,freq])+'\n'
+    #almost impossible to reach here
     return False,text
 
+#替换stem
+
+#in  oldstem \t query \t freq
+#out newstem \t query \t freq
+def sed_operator(text,lang):
+    sed_dict = getattr(process_dict,lang+'_sed_dict')
+    [stem_query,query,freq] = text.strip().split('\t')
+    for sed in sed_dict:
+        sed_compiler = re.compile(sed)
+        if sed_compiler.search(stem_query):
+            sed_compiler.sub(sed_dict[sed],stem_query)
+            return True,'\t'.join([stem_query,query,freq])+'\n'
+    return True,text
 
