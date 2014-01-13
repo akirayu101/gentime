@@ -2,10 +2,16 @@
 import process_dict
 
 def error_format_filter(text,lang):
-    if len(text.split('\t')) != 2:
-        return False,text
+    if len(text.split('\t')) == 2:
+        try:
+            seg = text.strip().split('\t')
+            query = str(seg[0])
+            freq = int(seg[1])
+            return True,text
+        except ValueError:
+            return False,text
     else:
-        return True,text
+        return False,text
 
 def contain_filter(text,lang):
     contain_dict = getattr(process_dict,lang+'_contain_dict')
