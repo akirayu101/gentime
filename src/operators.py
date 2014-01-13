@@ -9,7 +9,7 @@ import when
 # out query freq
 
 
-def error_format_filter(text, lang):
+def line_error_format_filter(text, lang):
     if len(text.split('\t')) == 2:
         try:
             seg = text.strip().split('\t')
@@ -22,7 +22,7 @@ def error_format_filter(text, lang):
         return False, text
 
 
-def contain_filter(text, lang):
+def line_contain_filter(text, lang):
     contain_dict = getattr(process_dict, lang + '_contain_dict')
     for contain_seg in contain_dict:
         if contain_seg in text.split('\t')[0]:
@@ -30,7 +30,7 @@ def contain_filter(text, lang):
     return False, text
 
 
-def punish_filter(text, lang):
+def line_punish_filter(text, lang):
     punish_dict = getattr(process_dict, lang + '_punish_dict')
     for punish_seg in punish_dict:
         if punish_seg in text.split('\t')[0]:
@@ -38,7 +38,7 @@ def punish_filter(text, lang):
     return True, text
 
 
-def prefix_filter(text, lang):
+def line_prefix_filter(text, lang):
     prefix_dict = getattr(process_dict, lang + '_prefix_dict')
     for prefix_seg in prefix_dict:
         if text.split('\t')[0].startswith(prefix_seg):
@@ -52,7 +52,7 @@ def prefix_filter(text, lang):
 # in  query \t freq
 # out stem \t query \t freq
 
-def stem_extractor(text, lang):
+def line_stem_extractor(text, lang):
     stem_dict = getattr(process_dict, lang + '_stem_dict')
     [query, freq] = text.strip().split('\t')
     for stem in stem_dict:
@@ -69,7 +69,7 @@ def stem_extractor(text, lang):
 # out newstem \t query \t freq
 
 
-def sed_operator(text, lang):
+def line_sed_operator(text, lang):
     sed_dict = getattr(process_dict, lang + '_sed_dict')
     # dict key: sub_pattern value: replace_term
 
@@ -87,7 +87,7 @@ def sed_operator(text, lang):
 # out stem query freq time(exmple 201401)
 
 
-def timestamp_operator(text, lang):
+def line_timestamp_operator(text, lang):
     [stem_query, query, freq] = text.strip().split('\t')
     timestamp = when.now().strftime("%Y%m")
     return True, '\t'.join([stem_query, query, freq, timestamp])

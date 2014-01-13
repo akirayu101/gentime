@@ -1,8 +1,8 @@
-from processor import line_processor
+from processor import general_processor
 import operators
 
 
-processor = line_processor('intest', 'log', 'eg')
-processor.add_operator(operators.stem_extractor)
-processor.add_operator(operators.timestamp_operator)
+processor = general_processor('intest', 'log', 'eg','line')
+processor.add_operator(operators.line_stem_extractor)
+processor.add_operator(operators.line_timestamp_operator)
 processor.process()
