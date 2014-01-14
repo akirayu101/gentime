@@ -44,9 +44,7 @@ class general_processor():
                     if text:
                         of.write(text + '\n')
         elif self.pro_type in ['block', 'sh']:
-            print "in"
             if len(self.operators):
-                print "in agin"
                 self.operators[0](self.infile, self.outfile)
 
 
