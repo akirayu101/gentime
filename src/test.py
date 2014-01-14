@@ -2,7 +2,6 @@ from processor import general_processor
 import operators
 
 
-processor = general_processor('intest', 'log', 'eg','line')
-processor.add_operator(operators.line_stem_extractor)
-processor.add_operator(operators.line_timestamp_operator)
+processor = general_processor('log', 'log2', 'eg','block')
+processor.add_operator(operators.block_merge_operator)
 processor.process()

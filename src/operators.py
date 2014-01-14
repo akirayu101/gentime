@@ -2,6 +2,7 @@
 import process_dict
 import re
 import when
+import sh
 
 # 过滤器operator
 # 返回bool
@@ -91,3 +92,28 @@ def line_timestamp_operator(text, lang):
     [stem_query, query, freq] = text.strip().split('\t')
     timestamp = when.now().strftime("%Y%m")
     return True, '\t'.join([stem_query, query, freq, timestamp])
+
+# sh function start with sh prefix 
+
+
+
+
+# block function start with block
+
+# block merge operator
+
+# in  stem query freq time
+# out stem [query:freq:time]
+
+def block_merge_operator(infile,outfile):
+    stem_dict = {}
+    with open(infile) as inf,open(outfile,'wb') as of:
+        for line in inf:
+            text = line.strip().split('\t')
+            [stem,item] = [text[0],text[1:]]
+            if stem not in stem_dict:
+                stem_dict.setdefault(stem,[])
+            else:
+                stem_dict[stem].append(':'.join(item))
+        for key in stem_dict:
+            of.write(key + '\t' + '\t'.join(stem_dict[key]) + '\n')
