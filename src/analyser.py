@@ -14,7 +14,7 @@ class request_type:
         self.querys = []
         self.total_freq = 0
 
-    def add_query(query, query_freq):
+    def add_query(self, query, query_freq):
         self.querys.append(query)
         self.total_freq += query_freq
 
@@ -35,13 +35,39 @@ class analyser:
         self.next_year = when.future(years=1).strftime("%Y")
         self.year_before_last = when.past(years=2).strftime("%Y")
         self.month_freq_dict = defaultdict(int)
+
+        # calc month freq
         for query_item in self.query_items:
             self.month_freq_dict[query_item[2]] += int(query_item[1])
+
+        self.request_types = {}
+        for query_item in self.query_items:
+            type_key = self.calc_query_type(query_item[0])
+            if type_key:
+                self.request_types.setdefault(type_key, request_type(type_key))
+                self.request_types[type_key].add_query(
+                    query_item[0], int(query_item[1]))
+
+    def calc_query_type(self, query):
+        if self.this_year in query:
+            return self.this_year
+        elif self.last_year in query:
+            return self.last_year
+        elif self.year_before_last in query:
+            return self.year_before_last
+        elif self.next_year in query:
+            return self.next_year
+        else:
+            return getattr(self, self.lang + '_calc_query_type')(query)
+
+    def th_calc_query_type(self, query):
+        # TODO
+        return None
 
     def debug_log(self):
         for i in dir(self):
             print i, getattr(self, i)
 
 
-ana = analyser('chn', text.text)
+ana = analyser('th', text.text)
 ana.debug_log()
