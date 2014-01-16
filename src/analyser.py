@@ -34,11 +34,27 @@ class analyser:
         self.last_year = when.past(years=1).strftime("%Y")
         self.next_year = when.future(years=1).strftime("%Y")
         self.year_before_last = when.past(years=2).strftime("%Y")
+
+        self.recent_three_month = [
+            self.month_name_helper(i) for i in xrange(3)]
+
+        self.this_year_freq = 0
+        self.last_year_freq = 0
+        self.recent_three_month_freq = 0
         self.month_freq_dict = defaultdict(int)
 
         # calc month freq
         for query_item in self.query_items:
             self.month_freq_dict[query_item[2]] += int(query_item[1])
+        for month_name, freq in self.month_freq_dict.items():
+            if self.this_year in month_name:
+                if month_name in self.recent_three_month:
+                    self.recent_three_month_freq += freq
+                self.this_year_freq += freq
+            elif self.last_year in month_name:
+                self.last_year_freq += freq
+            else:
+                pass
 
         self.request_types = {}
         for query_item in self.query_items:
@@ -47,6 +63,9 @@ class analyser:
                 self.request_types.setdefault(type_key, request_type(type_key))
                 self.request_types[type_key].add_query(
                     query_item[0], int(query_item[1]))
+
+    def month_name_helper(self, i):
+        return when.past(months=i).strftime('%Y%m')
 
     def calc_query_type(self, query):
         if self.this_year in query:
@@ -60,8 +79,14 @@ class analyser:
         else:
             return getattr(self, self.lang + '_calc_query_type')(query)
 
+    # TODO
     def th_calc_query_type(self, query):
-        # TODO
+        return None
+
+    def pt_calc_query_type(self, query):
+        return None
+
+    def eg_calc_query_type(self, query):
         return None
 
     def debug_log(self):
