@@ -54,7 +54,7 @@ class analyser:
     def th_processor_test(self):
         print 'th lang branch'
 
-    def calc_freq(self):
+    def general_processor_calc_freq(self):
         # calc month freq
         for query_item in self.query_items:
             self.month_freq_dict[query_item[2]] += int(query_item[1])
@@ -80,11 +80,12 @@ class analyser:
         self.processors.append(process_func)
 
     def process(self):
-        self.calc_freq()
         for i in dir(self):
-            if i.startswith('general_processor') or i.startswith(self.lang + '_processor'):
-                print i
+            if i.startswith('general_processor'):
                 self.add_analyze_processor(getattr(self, i))
+        for i in dir(self):
+            if i.startswith(self.lang + '_processor'):
+                self.add_analyze_processor(getattr(self,i))
         for processor in self.processors:
             processor()
 
