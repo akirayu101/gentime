@@ -11,11 +11,9 @@ class request_type:
 
     def __init__(self, type_key):
         self.type_key = type_key
-        self.querys = []
         self.total_freq = 0
 
     def add_query(self, query, query_freq):
-        self.querys.append(query)
         self.total_freq += query_freq
 
 
@@ -29,6 +27,7 @@ class analyser:
         self.query_items = map(
             lambda t: t.strip().split(':'), text.strip().split('\t')[1:])
         self.querys = [item[0] for item in self.query_items]
+        self.querys = list(set(self.querys))
 
         self.this_year = when.past(years=0).strftime("%Y")
         self.last_year = when.past(years=1).strftime("%Y")
