@@ -18,11 +18,6 @@ class request_type:
         self.total_freq += query_freq
 
 
-def debug_processor(instance):
-    for i in dir(instance):
-        print i, getattr(instance, i)
-
-
 class analyser:
 
     def __init__(self, lang, text):
@@ -51,6 +46,11 @@ class analyser:
         self.main_request_type = None
         self.main_request_degree = 0
 
+    # processors begin here
+    def debug_processor_(self):
+        for i in dir(self):
+            print i, getattr(self, i)
+
     def calc_freq(self):
         # calc month freq
         for query_item in self.query_items:
@@ -74,10 +74,16 @@ class analyser:
                     query_item[0], int(query_item[1]))
 
     def add_analyze_processor(self, process_func):
-        self.processors.append(partial(process_func, instance=self))
+        print process_func.__name__
+        print type(process_func)
+
+        self.processors.append(process_func)
 
     def process(self):
         self.calc_freq()
+        for i in dir(self):
+            if i.endswith('processor_'):
+                self.add_analyze_processor(getattr(self, i))
         for processor in self.processors:
             processor()
 
@@ -108,5 +114,5 @@ class analyser:
 
 
 ana = analyser('th', text.text)
-ana.add_analyze_processor(debug_processor)
+# ana.add_analyze_processor(debug_processor)
 ana.process()
