@@ -46,10 +46,13 @@ class analyser:
         self.main_request_type = None
         self.main_request_degree = 0
 
-    # processors begin here
-    def debug_processor_(self):
+    # general_processor starts here
+    def general_processor_debug(self):
         for i in dir(self):
             print i, getattr(self, i)
+
+    def th_processor_test(self):
+        print 'th lang branch'
 
     def calc_freq(self):
         # calc month freq
@@ -74,15 +77,13 @@ class analyser:
                     query_item[0], int(query_item[1]))
 
     def add_analyze_processor(self, process_func):
-        print process_func.__name__
-        print type(process_func)
-
         self.processors.append(process_func)
 
     def process(self):
         self.calc_freq()
         for i in dir(self):
-            if i.endswith('processor_'):
+            if i.startswith('general_processor') or i.startswith(self.lang + '_processor'):
+                print i
                 self.add_analyze_processor(getattr(self, i))
         for processor in self.processors:
             processor()
