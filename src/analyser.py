@@ -2,6 +2,7 @@
 # coding=utf-8
 import when
 from collections import defaultdict
+from functools import partial
 
 # for debug
 import text
@@ -15,6 +16,11 @@ class request_type:
 
     def add_query(self, query, query_freq):
         self.total_freq += query_freq
+
+
+def debug_processor(instance):
+    for i in dir(instance):
+        print i, getattr(instance, i)
 
 
 class analyser:
@@ -41,7 +47,11 @@ class analyser:
         self.last_year_freq = 0
         self.recent_three_month_freq = 0
         self.month_freq_dict = defaultdict(int)
+        self.processors = []
+        self.main_request_type = None
+        self.main_request_degree = 0
 
+    def calc_freq(self):
         # calc month freq
         for query_item in self.query_items:
             self.month_freq_dict[query_item[2]] += int(query_item[1])
@@ -62,6 +72,14 @@ class analyser:
                 self.request_types.setdefault(type_key, request_type(type_key))
                 self.request_types[type_key].add_query(
                     query_item[0], int(query_item[1]))
+
+    def add_analyze_processor(self, process_func):
+        self.processors.append(partial(process_func, instance=self))
+
+    def process(self):
+        self.calc_freq()
+        for processor in self.processors:
+            processor()
 
     def month_name_helper(self, i):
         return when.past(months=i).strftime('%Y%m')
@@ -88,10 +106,7 @@ class analyser:
     def eg_calc_query_type(self, query):
         return None
 
-    def debug_log(self):
-        for i in dir(self):
-            print i, getattr(self, i)
-
 
 ana = analyser('th', text.text)
-ana.debug_log()
+ana.add_analyze_processor(debug_processor)
+ana.process()
