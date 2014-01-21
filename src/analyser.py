@@ -45,12 +45,20 @@ class analyser:
         self.processors = []
         self.main_request_type = None
         self.main_request_degree = 0
+        for i in dir(self):
+            if i.startswith('general_processor'):
+                self.add_analyze_processor(getattr(self, i))
+        for i in dir(self):
+            if i.startswith(self.lang + '_processor'):
+                self.add_analyze_processor(getattr(self,i))
+ 
 
     # general_processor starts here
     def general_processor_debug(self):
         for i in dir(self):
             print i, getattr(self, i)
 
+    # lang branch processor
     def th_processor_test(self):
         print 'th lang branch'
 
@@ -80,13 +88,7 @@ class analyser:
         self.processors.append(process_func)
 
     def process(self):
-        for i in dir(self):
-            if i.startswith('general_processor'):
-                self.add_analyze_processor(getattr(self, i))
-        for i in dir(self):
-            if i.startswith(self.lang + '_processor'):
-                self.add_analyze_processor(getattr(self,i))
-        for processor in self.processors:
+       for processor in self.processors:
             processor()
 
     def month_name_helper(self, i):
