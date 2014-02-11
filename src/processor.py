@@ -3,22 +3,29 @@
 
 langset = ['eg', 'th', 'pt']
 
+import operators
+import logging
+logging.basicConfig(level=logging.INFO)
+
 
 class general_processor():
 
-    def __init__(self, infile, outfile, lang, pro_type):
-        self.infile = infile
-        self.outfile = outfile
+    def __init__(self, lang, pro_type):
+        self.infile = None
+        self.outfile = None
         self.lang = lang
         self.operators = []
         self.pro_type = pro_type
 
+    def set_io(self, infile, outfile):
+        self.infile = infile
+        self.outfile = outfile
+
     def add_operator(self, operator):
         if self.pro_type in ['block', 'sh']:
             if len(self.operators):
-                print len(self.operators)
-                pass  # block and sh processor contain one operator
-        # maintain single type in one processor
+                logging.warn('type processor contain only one operator')
+                pass
         if operator.__name__.startswith(self.pro_type):
             self.operators.append(operator)
         else:
@@ -27,6 +34,7 @@ class general_processor():
     # line type process
     def line_process(self, text):
         for operator in self.operators:
+            logging.debug("process %s", operator.__name__)
             noerr, text = operator(text, self.lang)
             if not noerr:
                 return None
@@ -37,6 +45,8 @@ class general_processor():
         pass
 
     def process(self):
+        if not self.infile:
+            logging.fatal("no input specified")
         if self.pro_type == 'line':
             with open(self.infile) as inf, open(self.outfile, 'wb') as of:
                 for line in inf:
@@ -48,11 +58,27 @@ class general_processor():
                 self.operators[0](self.infile, self.outfile)
 
 
+class processor_impl():
+
+    def __init__(self, proto_processor):
+        self.processor = proto_processor
+
+    def process(self, infile, outfile):
+        self.processor.set_io(infile, outfile)
+        self.processor.process()
+
 # simple factory
 # filter_process  : all filters, stream based
 # shell_process   : using sh command, wrap process apis
 # block_process   : sum up datas, etc
 # analysis_process: request type analysis, output final data
-def simple_processor_factory(instance_type, lang):
+
+
+def simple_processor_factory(lang, instance_type):
     if lang not in langset:
         return None
+    proto_processor = general_processor(lang, instance_type)
+    if instance_type == 'line':
+        proto_processor.add_operator(operators.line_error_format_filter)
+        proto_processor.add_operator(operators.line_contain_filter)
+    return processor_impl(proto_processor)
