@@ -5,7 +5,6 @@ langset = ['eg', 'th', 'pt']
 
 import operators
 import logging
-logging.basicConfig(level=logging.INFO)
 
 
 class general_processor():

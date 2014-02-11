@@ -8,24 +8,26 @@ langset = ['eg', 'th', 'pt']
 datadir = '../data/'
 mid_datadir = '../mid_data/'
 file_suffix = when.now().strftime("%Y%m%d")
+logging.basicConfig(
+    format='%(levelname)s %(asctime)s %(message)s', level=logging.INFO)
 
 
 def file_names(DIR):
     return re.split('\t|\n', str(sh.ls(DIR).strip()))
 
 
-def main():
-    logging.basicConfig(level=logging.INFO)
-    logging.info('Start processing')
-
-    # clean error file
+def clean_mid_data():
     stepnames = ['step' + str(i) + '_' + file_suffix for i in range(1, 5)]
     for lang in langset:
         for stepname in stepnames:
             sh.rm('-rf', mid_datadir + lang + '/' + stepname)
 
-    logging.info('Step 1: processing raw data')
 
+def main():
+    clean_mid_data()
+
+    logging.info('Start processing')
+    logging.info('Step 1: processing raw data')
     # step1 processing raw data
     for lang in langset:
         process = processor.simple_processor_factory(lang, 'line')
