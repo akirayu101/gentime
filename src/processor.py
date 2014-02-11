@@ -48,7 +48,7 @@ class general_processor():
         if not self.infile:
             logging.fatal("no input specified")
         if self.pro_type == 'line':
-            with open(self.infile) as inf, open(self.outfile, 'wb') as of:
+            with open(self.infile) as inf, open(self.outfile, 'ab') as of:
                 for line in inf:
                     text = self.line_process(line.strip())
                     if text:
