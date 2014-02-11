@@ -5,7 +5,7 @@ from collections import defaultdict
 from functools import partial
 
 # for debug
-import text
+# import text
 
 
 class request_type:
@@ -50,8 +50,7 @@ class analyser:
                 self.add_analyze_processor(getattr(self, i))
         for i in dir(self):
             if i.startswith(self.lang + '_processor'):
-                self.add_analyze_processor(getattr(self,i))
- 
+                self.add_analyze_processor(getattr(self, i))
 
     # general_processor starts here
     def general_processor_debug(self):
@@ -88,7 +87,7 @@ class analyser:
         self.processors.append(process_func)
 
     def process(self):
-       for processor in self.processors:
+        for processor in self.processors:
             processor()
 
     def month_name_helper(self, i):
@@ -117,6 +116,6 @@ class analyser:
         return None
 
 
-ana = analyser('th', text.text)
+# ana = analyser('th', text.text)
 # ana.add_analyze_processor(debug_processor)
-ana.process()
+# ana.process()
