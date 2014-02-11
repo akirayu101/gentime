@@ -3,6 +3,7 @@ import process_dict
 import re
 import when
 import sh
+from copy import deepcopy
 
 # 过滤器operator
 # 返回bool
@@ -16,7 +17,10 @@ def line_error_format_filter(text, lang):
             seg = text.strip().split('\t')
             query = str(seg[0])
             freq = int(seg[1])
-            return True, text
+            if freq >= 40:
+                return True, text
+            else:
+                return False, text
         except ValueError:
             return False, text
     else:
@@ -56,13 +60,20 @@ def line_prefix_filter(text, lang):
 def line_stem_extractor(text, lang):
     stem_dict = getattr(process_dict, lang + '_stem_dict')
     [query, freq] = text.strip().split('\t')
+    ori_query = deepcopy(query)
+    stem_query = ''
+    find_stem = False
     for stem in stem_dict:
         stem_index = query.find(stem)
         if stem_index != -1:
             stem_query = query[:stem_index] + query[stem_index + len(stem):]
-            return True, '\t'.join([stem_query, query, freq])
+            if stem_query.strip() != '':
+                find_stem = True
+                query = stem_query
+            else:
+                find_stem = False
     # almost impossible to reach here
-    return False, text
+    return find_stem, '\t'.join([stem_query, ori_query, freq])
 
 # 替换stem
 
@@ -88,9 +99,8 @@ def line_sed_operator(text, lang):
 # out stem query freq time(exmple 201401)
 
 
-def line_timestamp_operator(text, lang):
+def line_timestamp_operator(text, lang, timestamp):
     [stem_query, query, freq] = text.strip().split('\t')
-    timestamp = when.now().strftime("%Y%m")
     return True, '\t'.join([stem_query, query, freq, timestamp])
 
 # sh function start with sh prefix
@@ -108,7 +118,6 @@ def block_merge_operator(infile, outfile):
             [stem, item] = [text[0], text[1:]]
             if stem not in stem_dict:
                 stem_dict.setdefault(stem, [])
-            else:
-                stem_dict[stem].append(':'.join(item))
+            stem_dict[stem].append(':'.join(item))
         for key in stem_dict:
             of.write(key + '\t' + '\t'.join(stem_dict[key]) + '\n')

@@ -32,10 +32,15 @@ class general_processor():
             pass  # we need write log here
 
     # line type process
-    def line_process(self, text):
+    def line_process(self, text, filename):
         for operator in self.operators:
             logging.debug("process %s", operator.__name__)
-            noerr, text = operator(text, self.lang)
+            logging.debug("text %s", text)
+            if operator.__name__ == "line_timestamp_operator":
+                noerr, text = operator(
+                    text, self.lang, filename.split('/')[-1])
+            else:
+                noerr, text = operator(text, self.lang)
             if not noerr:
                 return None
         return text
@@ -50,7 +55,7 @@ class general_processor():
         if self.pro_type == 'line':
             with open(self.infile) as inf, open(self.outfile, 'ab') as of:
                 for line in inf:
-                    text = self.line_process(line.strip())
+                    text = self.line_process(line.strip(), self.infile)
                     if text:
                         of.write(text + '\n')
         elif self.pro_type in ['block', 'sh']:
@@ -81,4 +86,8 @@ def simple_processor_factory(lang, instance_type):
     if instance_type == 'line':
         proto_processor.add_operator(operators.line_error_format_filter)
         proto_processor.add_operator(operators.line_contain_filter)
+        proto_processor.add_operator(operators.line_stem_extractor)
+        proto_processor.add_operator(operators.line_timestamp_operator)
+    if instance_type == 'block':
+        proto_processor.add_operator(operators.block_merge_operator)
     return processor_impl(proto_processor)
