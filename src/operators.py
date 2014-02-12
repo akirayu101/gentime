@@ -62,19 +62,23 @@ def line_stem_extractor(text, lang):
     stem_dict = getattr(process_dict, lang + '_stem_dict')
     [query, freq] = text.strip().split('\t')
     ori_query = deepcopy(query)
-    stem_query = ''
+    stem_query = query
     find_stem = False
     for stem in stem_dict:
-        stem_index = query.find(stem)
+        print 'stem : %s' % stem
+        print 'before : %s' % stem_query
+        stem_index = stem_query.find(stem)
         if stem_index != -1:
-            stem_query = query[:stem_index] + query[stem_index + len(stem):]
+            stem_query = stem_query[:stem_index] + \
+                stem_query[stem_index + len(stem):]
             if stem_query.strip() != '':
                 find_stem = True
-                query = stem_query
             else:
                 find_stem = False
+
+        print 'after : %s' % stem_query
     # almost impossible to reach here
-    return find_stem, '\t'.join([stem_query, ori_query, freq])
+    return find_stem, '\t'.join([stem_query.strip(), ori_query, freq])
 
 # 替换stem
 
@@ -125,7 +129,5 @@ def block_merge_operator(infile, outfile):
 
 
 def analysis_stem_operator(text, lang):
-    print 'text is ', text
-    print 'lang is', lang
     ana = analyser(text, lang)
     return ana.process()
