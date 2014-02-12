@@ -6,22 +6,24 @@ from functools import partial
 import process_dict
 
 # for debug
-# import text
+#import text
 
 
 class request_type:
 
     def __init__(self, type_key):
         self.type_key = type_key
-        self.total_freq = 0
+        self.freq = 0
+        self.querys = []
 
     def add_query(self, query, query_freq):
-        self.total_freq += query_freq
+        self.freq += query_freq
+        self.querys.append(query)
 
 
 class analyser:
 
-    def __init__(self, lang, text):
+    def __init__(self, text, lang):
         self.lang = lang
         self.stem = text.strip().split('\t')[0]
 
@@ -39,6 +41,7 @@ class analyser:
         self.recent_three_month = [
             self.month_name_helper(i) for i in xrange(3)]
 
+        self.total_freq = 0
         self.this_year_freq = 0
         self.last_year_freq = 0
         self.recent_three_month_freq = 0
@@ -54,18 +57,15 @@ class analyser:
                 self.add_analyze_processor(getattr(self, i))
 
     # general_processor starts here
-    def general_processor_debug(self):
+    def nogeneral_processor_debug(self):
         for i in dir(self):
             print i, getattr(self, i)
-
-    # lang branch processor
-    def th_processor_test(self):
-        print 'th lang branch'
 
     def general_processor_calc_freq(self):
         # calc month freq
         for query_item in self.query_items:
             self.month_freq_dict[query_item[2]] += int(query_item[1])
+            self.total_freq += int(query_item[1])
         for month_name, freq in self.month_freq_dict.items():
             if self.this_year in month_name:
                 if month_name in self.recent_three_month:
@@ -77,6 +77,7 @@ class analyser:
                 pass
 
         self.request_types = {}
+        self.request_types.setdefault('newest', request_type('newest'))
         for query_item in self.query_items:
             type_key = self.calc_query_type(query_item[0])
             if type_key:
@@ -90,6 +91,7 @@ class analyser:
     def process(self):
         for processor in self.processors:
             processor()
+        return self.gen_output()
 
     def month_name_helper(self, i):
         return when.past(months=i).strftime('%Y%m')
@@ -106,7 +108,6 @@ class analyser:
         else:
             return self.calc_query_type(query)
 
-    # TODO
     def calc_query_type(self, query):
         newest_dict = getattr(process_dict, self.lang + '_newest_dict')
         for word in newest_dict:
@@ -118,11 +119,36 @@ class analyser:
                 return self.this_year
         return 'undefined'
 
+    # TODO
     def gen_output(self):
-        pass
+        # first we calc stem type
+        this_year_type = 'year'
+        newest_type = 'newest'
+        giventime_type = 'given'
+        stem_type = 'undefined'
+        stem_strength = 0
+        print self.total_freq
+        print self.stem
+        if float(self.request_types['newest'].freq) / self.total_freq >= 0.3:
+            stem_type = newest_type
+        else:
+            if float(self.recent_three_month_freq) / self.total_freq >= 0.3:
+                stem_type = newest_type
+            else:
+                stem_type = this_year_type
+        # then we calc strength
+        if self.total_freq > 100:
+            stem_strength = 3
+        elif self.total_freq > 40:
+            stem_strength = 2
+        else:
+            stem_strength = 1
+
+        return '\t'.join([self.stem, stem_type, str(stem_strength)])
 
 
 
-# ana = analyser('th', text.text)
+
+#ana = analyser('pt', text.text)
 # ana.add_analyze_processor(debug_processor)
-# ana.process()
+# print ana.process()

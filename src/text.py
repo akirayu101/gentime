@@ -1,3 +1,3 @@
 #/usr/bin/env python
 # coding=utf-8
-text = '000kkk	000kkk最新 2013:46:201210	000kkk最新 2014:83:201401	000kkk最新 2015:23:201305	000kkk最新:31:201306	000kkk最新:34:201307	000kkk最新:39:201308'
+text = 'globeleza 	globeleza 2013:14:201311	globeleza 2014:20:201401	globeleza 2013:10:201312'

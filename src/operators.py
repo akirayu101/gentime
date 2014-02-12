@@ -125,5 +125,7 @@ def block_merge_operator(infile, outfile):
 
 
 def analysis_stem_operator(text, lang):
-    ana = analyzer(text, lang)
+    print 'text is ', text
+    print 'lang is', lang
+    ana = analyser(text, lang)
     return ana.process()

@@ -43,6 +43,13 @@ def main():
         process = processor.simple_processor_factory(lang, 'block')
         process.process(mid_datadir + lang + '/' + 'step1_' + file_suffix,
                         mid_datadir + lang + '/' + 'step2_' + file_suffix)
+    # step3 calc stem type and strengh
+    if 1:
+        for lang in langset:
+            logging.info('Step 3: calc stem ,lang:%s', lang)
+            process = processor.simple_processor_factory(lang, 'analysis')
+            process.process(mid_datadir + lang + '/' + 'step2_' + file_suffix,
+                            mid_datadir + lang + '/' + 'step3_' + file_suffix)
 
 
 if __name__ == "__main__":

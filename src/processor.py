@@ -63,7 +63,7 @@ class general_processor():
             if len(self.operators):
                 with open(self.infile) as inf, open(self.outfile, 'ab') as of:
                     for line in inf:
-                        text = self.analysis_process(text)
+                        text = self.analysis_process(line)
                         of.write(text + '\n')
 
 
@@ -89,8 +89,11 @@ def simple_processor_factory(lang, instance_type):
     if instance_type == 'line':
         proto_processor.add_operator(operators.line_error_format_filter)
         proto_processor.add_operator(operators.line_contain_filter)
+        proto_processor.add_operator(operators.line_punish_filter)
         proto_processor.add_operator(operators.line_stem_extractor)
         proto_processor.add_operator(operators.line_timestamp_operator)
     if instance_type == 'block':
         proto_processor.add_operator(operators.block_merge_operator)
+    if instance_type == 'analysis':
+        proto_processor.add_operator(operators.analysis_stem_operator)
     return processor_impl(proto_processor)
