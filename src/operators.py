@@ -1,5 +1,6 @@
 # coding=utf-8
 import process_dict
+from analyser import analyser
 import re
 import when
 import sh
@@ -121,3 +122,8 @@ def block_merge_operator(infile, outfile):
             stem_dict[stem].append(':'.join(item))
         for key in stem_dict:
             of.write(key + '\t' + '\t'.join(stem_dict[key]) + '\n')
+
+
+def analysis_stem_operator(text, lang):
+    ana = analyzer(text, lang)
+    return ana.process()

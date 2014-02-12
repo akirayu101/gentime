@@ -3,6 +3,7 @@
 import when
 from collections import defaultdict
 from functools import partial
+import process_dict
 
 # for debug
 # import text
@@ -103,17 +104,23 @@ class analyser:
         elif self.next_year in query:
             return self.next_year
         else:
-            return getattr(self, self.lang + '_calc_query_type')(query)
+            return self.calc_query_type(query)
 
     # TODO
-    def th_calc_query_type(self, query):
-        return None
+    def calc_query_type(self, query):
+        newest_dict = getattr(process_dict, self.lang + '_newest_dict')
+        for word in newest_dict:
+            if word in query:
+                return 'newest'
+        thisyear_dict = getattr(process_dict, self.lang + '_thisyear_dict')
+        for word in thisyear_dict:
+            if word in query:
+                return self.this_year
+        return 'undefined'
 
-    def pt_calc_query_type(self, query):
-        return None
+    def gen_output(self):
+        pass
 
-    def eg_calc_query_type(self, query):
-        return None
 
 
 # ana = analyser('th', text.text)

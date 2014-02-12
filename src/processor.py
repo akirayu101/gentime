@@ -21,14 +21,13 @@ class general_processor():
         self.outfile = outfile
 
     def add_operator(self, operator):
-        if self.pro_type in ['block', 'sh']:
+        if self.pro_type in ['block', 'analysis']:
             if len(self.operators):
                 logging.warn('type processor contain only one operator')
-                pass
         if operator.__name__.startswith(self.pro_type):
             self.operators.append(operator)
         else:
-            pass  # we need write log here
+            logging.fatal('add operator pro_type not compatible')
 
     # line type process
     def line_process(self, text, filename):
@@ -46,7 +45,7 @@ class general_processor():
 
     # analysis_process
     def analysis_process(self, text):
-        pass
+        return self.operators[0](text, self.lang)
 
     def process(self):
         if not self.infile:
@@ -57,9 +56,15 @@ class general_processor():
                     text = self.line_process(line.strip(), self.infile)
                     if text:
                         of.write(text + '\n')
-        elif self.pro_type in ['block', 'sh']:
+        elif self.pro_type == 'block':
             if len(self.operators):
                 self.operators[0](self.infile, self.outfile)
+        elif self.pro_type == 'analysis':
+            if len(self.operators):
+                with open(self.infile) as inf, open(self.outfile, 'ab') as of:
+                    for line in inf:
+                        text = self.analysis_process(text)
+                        of.write(text + '\n')
 
 
 class processor_impl():
@@ -72,8 +77,7 @@ class processor_impl():
         self.processor.process()
 
 # simple factory
-# filter_process  : all filters, stream based
-# shell_process   : using sh command, wrap process apis
+# line_process  : all filters, stream based
 # block_process   : sum up datas, etc
 # analysis_process: request type analysis, output final data
 
