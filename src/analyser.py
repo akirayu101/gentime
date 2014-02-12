@@ -127,8 +127,6 @@ class analyser:
         giventime_type = 'given'
         stem_type = 'undefined'
         stem_strength = 0
-        print self.total_freq
-        print self.stem
         if float(self.request_types['newest'].freq) / self.total_freq >= 0.3:
             stem_type = newest_type
         else:

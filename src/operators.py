@@ -65,8 +65,6 @@ def line_stem_extractor(text, lang):
     stem_query = query
     find_stem = False
     for stem in stem_dict:
-        print 'stem : %s' % stem
-        print 'before : %s' % stem_query
         stem_index = stem_query.find(stem)
         if stem_index != -1:
             stem_query = stem_query[:stem_index] + \
@@ -75,8 +73,6 @@ def line_stem_extractor(text, lang):
                 find_stem = True
             else:
                 find_stem = False
-
-        print 'after : %s' % stem_query
     # almost impossible to reach here
     return find_stem, '\t'.join([stem_query.strip(), ori_query, freq])
 
