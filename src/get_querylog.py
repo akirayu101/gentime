@@ -3,9 +3,9 @@ import when
 times = []
 langset = ['eg', 'pt', 'th']
 
-# for i in range(201301,201313):
-#    times.append(str(i))
-# times.append('201401')
+for i in range(201304, 201313):
+    times.append(str(i))
+times.append('201401')
 times.append('201402')
 times.append('201403')
 

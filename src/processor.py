@@ -64,7 +64,7 @@ class general_processor():
                 with open(self.infile) as inf, open(self.outfile, 'ab') as of:
                     for line in inf:
                         text = self.analysis_process(line)
-                        of.write(text + '\n')
+                        of.write(text.strip() + '\n')
 
 
 class processor_impl():

@@ -5,6 +5,7 @@ from collections import defaultdict
 from functools import partial
 import process_dict
 from const import *
+import logging
 
 # for debug
 #import text
@@ -15,11 +16,12 @@ class request_type:
     def __init__(self, type_key):
         self.type_key = type_key
         self.freq = 0
-        self.querys = []
+        self.querys = {}
 
     def add_query(self, query, query_freq):
         self.freq += query_freq
-        self.querys.append(query)
+        self.querys.setdefault(query, 0)
+        self.querys[query] += query_freq
 
 
 class analyser:
@@ -118,7 +120,7 @@ class analyser:
         for word in thisyear_dict:
             if word in query:
                 return self.this_year
-        return 'undefined'
+        return 'year'
 
     # TODO
     def gen_output(self):
@@ -136,14 +138,31 @@ class analyser:
             else:
                 stem_type = this_year_type
         # then we calc strength
-        if self.total_freq > 100:
+        if self.total_freq > 10:
             stem_strength = 3
-        elif self.total_freq > 40:
+        elif self.total_freq > 5:
             stem_strength = 2
         else:
             stem_strength = 1
 
-        return '\t'.join([self.stem, stem_type, str(stem_strength)])
+        # here we write to stem file
+        with open(final_datadir + self.lang + '/' + 'stem_' + file_suffix, 'ab') as f:
+            f.write(
+                '\t'.join([self.stem, stem_type, str(stem_strength)]) + '\n')
+
+        ret = ''
+        for k, request in self.request_types.items():
+            for query, freq in request.querys.items():
+                if freq > 10:
+                    ret += '\t'.join([query, k, '3']) + '\n'
+                elif freq > 5:
+                    ret += '\t'.join([query, k, '2']) + '\n'
+                else:
+                    ret += '\t'.join([query, k, '1']) + '\n'
+        return ret
+
+
+
 
 
 
