@@ -3,10 +3,9 @@ import logging
 import sh
 import when
 import re
+from const import *
 
 langset = ['eg', 'th', 'pt']
-datadir = '../data/'
-mid_datadir = '../mid_data/'
 file_suffix = when.now().strftime("%Y%m%d")
 logging.basicConfig(
     format='%(levelname)s %(asctime)s %(message)s', level=logging.INFO)

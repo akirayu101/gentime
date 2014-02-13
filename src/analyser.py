@@ -4,6 +4,7 @@ import when
 from collections import defaultdict
 from functools import partial
 import process_dict
+from const import *
 
 # for debug
 #import text

@@ -18,10 +18,7 @@ def line_error_format_filter(text, lang):
             seg = text.strip().split('\t')
             query = str(seg[0])
             freq = int(seg[1])
-            if freq >= 10:
-                return True, text
-            else:
-                return False, text
+            return True, text
         except ValueError:
             return False, text
     else:
