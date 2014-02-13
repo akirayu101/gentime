@@ -5,6 +5,7 @@ langset = ['eg', 'th', 'pt']
 
 import operators
 import logging
+from const import *
 
 
 class general_processor():
@@ -15,6 +16,7 @@ class general_processor():
         self.lang = lang
         self.operators = []
         self.pro_type = pro_type
+        self.stems = []
 
     def set_io(self, infile, outfile):
         self.infile = infile
@@ -51,11 +53,14 @@ class general_processor():
         if not self.infile:
             logging.fatal("no input specified")
         if self.pro_type == 'line':
-            with open(self.infile) as inf, open(self.outfile, 'ab') as of:
+            with open(self.infile) as inf, open(self.outfile, 'ab') as of, open(mid_datadir + self.lang + '/noquerys_' + file_suffix, 'ab') as noqueryfile:
                 for line in inf:
                     text = self.line_process(line.strip(), self.infile)
                     if text:
                         of.write(text + '\n')
+                    else:
+                        noqueryfile.write(line.strip() + '\n')
+
         elif self.pro_type == 'block':
             if len(self.operators):
                 self.operators[0](self.infile, self.outfile)
@@ -65,6 +70,20 @@ class general_processor():
                     for line in inf:
                         text = self.analysis_process(line)
                         of.write(text.strip() + '\n')
+        elif self.pro_type == 'stem':
+            self.load_stem()
+            with open(self.infile) as inf, open(self.outfile, 'ab') as of:
+                    for line in inf:
+                        ok, text = self.operators[0](
+                            line, self.lang, self.stems)
+                        if ok:
+                            of.write(text.strip() + '\n')
+
+    def load_stem(self):
+        # load stems
+        with open(final_datadir + self.lang + '/stem_' + file_suffix) as stem_file:
+            for line in stem_file:
+                self.stems.append(line.strip().split('\t'))
 
 
 class processor_impl():
@@ -75,6 +94,7 @@ class processor_impl():
     def process(self, infile, outfile):
         self.processor.set_io(infile, outfile)
         self.processor.process()
+
 
 # simple factory
 # line_process  : all filters, stream based
@@ -96,4 +116,6 @@ def simple_processor_factory(lang, instance_type):
         proto_processor.add_operator(operators.block_merge_operator)
     if instance_type == 'analysis':
         proto_processor.add_operator(operators.analysis_stem_operator)
+    if instance_type == 'stem':
+        proto_processor.add_operator(operators.stem_recall_operator)
     return processor_impl(proto_processor)

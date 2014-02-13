@@ -6,6 +6,7 @@ import re
 from const import *
 
 langset = ['eg', 'th', 'pt']
+#langset = ['pt']
 
 logging.basicConfig(
     format='%(levelname)s %(asctime)s %(message)s', level=logging.INFO)
@@ -48,10 +49,19 @@ def step2():
 
 def step3():
     for lang in langset:
-            logging.info('Step 3: calc stem ,lang:%s', lang)
+            logging.info('Step 3: calc stem lang:%s', lang)
             process = processor.simple_processor_factory(lang, 'analysis')
             process.process(mid_datadir + lang + '/' + 'step2_' + file_suffix,
                             mid_datadir + lang + '/' + 'step3_' + file_suffix)
+
+
+def step4():
+    for lang in langset:
+            logging.info('Step 4: stem recall lang:%s', lang)
+            process = processor.simple_processor_factory(lang, 'stem')
+            process.process(
+                mid_datadir + lang + '/' + 'noquerys_' + file_suffix,
+                mid_datadir + lang + '/' + 'step4_' + file_suffix)
 
 
 def main():
@@ -61,6 +71,7 @@ def main():
     step1()
     step2()
     step3()
+    step4()
 
 if __name__ == "__main__":
     main()
