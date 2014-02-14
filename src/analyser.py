@@ -146,9 +146,10 @@ class analyser:
             stem_strength = 1
 
         # here we write to stem file
-        with open(final_datadir + self.lang + '/' + 'stem_' + file_suffix, 'ab') as f:
-            f.write(
-                '\t'.join([self.stem, stem_type, str(stem_strength)]) + '\n')
+        if not filter_stem(self.stem):
+            with open(final_datadir + self.lang + '/' + 'stem_' + file_suffix, 'ab') as f:
+                f.write(
+                    '\t'.join([self.stem, stem_type, str(stem_strength)]) + '\n')
 
         ret = ''
         for k, request in self.request_types.items():
@@ -162,11 +163,19 @@ class analyser:
         return ret
 
 
-
-
-
-
-
 #ana = analyser('pt', text.text)
 # ana.add_analyze_processor(debug_processor)
 # print ana.process()
+def filter_stem(stem):
+    if len(stem) < 4:
+        return True
+    elif 'www' in stem:
+        return True
+    elif '.com' in stem:
+        return True
+    elif len(stem.strip().split(' ')) == 1 and stem.strip().isalpha():
+        return True
+    elif len(stem.strip()) > 128:
+        return True
+    else:
+        return False

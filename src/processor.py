@@ -75,7 +75,7 @@ class general_processor():
             with open(self.infile) as inf, open(self.outfile, 'ab') as of:
                     for line in inf:
                         ok, text = self.operators[0](
-                            line, self.lang, self.stems)
+                            line.strip(), self.lang, self.stems)
                         if ok:
                             of.write(text.strip() + '\n')
 
@@ -83,7 +83,9 @@ class general_processor():
         # load stems
         with open(final_datadir + self.lang + '/stem_' + file_suffix) as stem_file:
             for line in stem_file:
-                self.stems.append(line.strip().split('\t'))
+                strength = int(line.strip().split('\t')[2])
+                if strength >= 3:
+                    self.stems.append(line.strip().split('\t'))
 
 
 class processor_impl():

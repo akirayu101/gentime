@@ -25,7 +25,7 @@ def clean_mid_data():
 
 def clean_final_data():
     for lang in langset:
-        sh.rm('-rf', final_datadir + '/' + 'stem_' + file_suffix)
+        sh.rm('-rf', final_datadir + lang + '/' + 'stem_' + file_suffix)
 
 
 def step1():
@@ -65,12 +65,12 @@ def step4():
 
 
 def main():
-    clean_mid_data()
-    clean_final_data()
-    logging.info('Start processing')
-    step1()
-    step2()
-    step3()
+#    clean_mid_data()
+#    clean_final_data()
+#    logging.info('Start processing')
+#    step1()
+#    step2()
+#    step3()
     step4()
 
 if __name__ == "__main__":

@@ -131,13 +131,12 @@ def analysis_stem_operator(text, lang):
 def stem_recall_operator(text, lang, stems):
     if text.strip() == '':
         return False, text
-    (query, freq) = text.strip().split('\t')
-    for stem in stems:
-        if stem[0] in query:
-            if freq > 10:
+    try:
+        (query, freq) = text.strip().split('\t')
+        for stem in stems:
+            if stem[0] in query:
                 return True, '\t'.join([query, stem[1], freq])
-            elif freq > 5:
-                return True, '\t'.join([query, stem[1], freq])
-            else:
-                return True, '\t'.join([query, stem[1], freq])
-    return False, text
+
+        return False, text
+    except:
+        return False, text
