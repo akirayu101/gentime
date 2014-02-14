@@ -138,5 +138,5 @@ def stem_recall_operator(text, lang, stems):
                 return True, '\t'.join([query, stem[1], freq])
 
         return False, text
-    except:
+    except ValueError:
         return False, text
