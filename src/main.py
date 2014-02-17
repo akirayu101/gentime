@@ -21,6 +21,7 @@ def clean_mid_data():
     for lang in langset:
         for stepname in stepnames:
             sh.rm('-rf', mid_datadir + lang + '/' + stepname)
+        sh.rm('-rf', mid_datadir + lang + '/' + 'noquerys_' + file_suffix)
 
 
 def clean_final_data():
@@ -65,12 +66,12 @@ def step4():
 
 
 def main():
-#    clean_mid_data()
-#    clean_final_data()
-#    logging.info('Start processing')
-#    step1()
-#    step2()
-#    step3()
+    clean_mid_data()
+    clean_final_data()
+    logging.info('Start processing')
+    step1()
+    step2()
+    step3()
     step4()
 
 if __name__ == "__main__":

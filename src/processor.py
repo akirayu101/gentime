@@ -6,6 +6,21 @@ langset = ['eg', 'th', 'pt']
 import operators
 import logging
 from const import *
+import multiprocessing
+from itertools import izip
+from multiprocessing import Process, Pipe
+from functools import partial
+
+
+def inner_process(args):
+    (infile, outfile, lang, stems, operator) = args
+    logging.info('stem recall infile:%s outfile:%s' % (infile, outfile))
+    with open(infile) as inf, open(outfile, 'wb') as of:
+        for line in inf:
+            ok, text = operator(
+                line.strip(), lang, stems)
+            if ok:
+                of.write(text.strip() + '\n')
 
 
 class general_processor():
@@ -21,6 +36,7 @@ class general_processor():
     def set_io(self, infile, outfile):
         self.infile = infile
         self.outfile = outfile
+        self.cpu_num = multiprocessing.cpu_count()
 
     def add_operator(self, operator):
         if self.pro_type in ['block', 'analysis']:
@@ -49,6 +65,17 @@ class general_processor():
     def analysis_process(self, text):
         return self.operators[0](text, self.lang)
 
+    def inner_process(self, args):
+                (infile, outfile) = args
+                logging.info('stem recall infile:%s outfile:%s' %
+                             (infile, outfile))
+                with open(infile) as inf, open(outfile, 'wb') as of:
+                    for line in inf:
+                        ok, text = self.operators[0](
+                            line.strip(), self.lang, self.stems)
+                        if ok:
+                            of.write(text.strip() + '\n')
+
     def process(self):
         if not self.infile:
             logging.fatal("no input specified")
@@ -72,12 +99,30 @@ class general_processor():
                         of.write(text.strip() + '\n')
         elif self.pro_type == 'stem':
             self.load_stem()
-            with open(self.infile) as inf, open(self.outfile, 'ab') as of:
-                    for line in inf:
-                        ok, text = self.operators[0](
-                            line.strip(), self.lang, self.stems)
-                        if ok:
-                            of.write(text.strip() + '\n')
+            self.open_temps = []
+            self.in_files = []
+            self.out_files = []
+            self.args = []
+
+            for i in xrange(self.cpu_num):
+                f = open(mid_datadir + self.lang + '/tempin' + str(i), 'wb')
+                self.open_temps.append(f)
+                self.in_files.append(
+                    mid_datadir + self.lang + '/tempin' + str(i))
+                self.out_files.append(
+                    mid_datadir + self.lang + '/tempout' + str(i))
+            for i in xrange(self.cpu_num):
+                self.args.append(
+                    (self.in_files[i], self.out_files[i], self.lang, self.stems, self.operators[0]))
+            with open(self.infile) as f:
+                for i, line in enumerate(f):
+                    self.open_temps[i %
+                                    self.cpu_num].write(line.strip() + '\n')
+            for i in xrange(self.cpu_num):
+                self.open_temps[i].close()
+
+            pool = multiprocessing.Pool(self.cpu_num)
+            pool.map(inner_process, self.args)
 
     def load_stem(self):
         # load stems
