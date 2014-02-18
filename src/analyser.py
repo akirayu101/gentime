@@ -146,7 +146,7 @@ class analyser:
             stem_strength = 1
 
         # here we write to stem file
-        if not filter_stem(self.stem):
+        if not filter_stem(self.stem) and stem_strength > 2:
             with open(final_datadir + self.lang + '/' + 'stem_' + file_suffix, 'ab') as f:
                 f.write(
                     '\t'.join([self.stem, stem_type, str(stem_strength)]) + '\n')

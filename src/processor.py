@@ -10,6 +10,7 @@ import multiprocessing
 from itertools import izip
 from multiprocessing import Process, Pipe
 from functools import partial
+import sh
 
 
 def inner_process(args):
@@ -39,7 +40,7 @@ class general_processor():
         self.cpu_num = multiprocessing.cpu_count()
 
     def add_operator(self, operator):
-        if self.pro_type in ['block', 'analysis']:
+        if self.pro_type in ['block', 'analysis', 'stem']:
             if len(self.operators):
                 logging.warn('type processor contain only one operator')
         if operator.__name__.startswith(self.pro_type):
@@ -123,6 +124,9 @@ class general_processor():
 
             pool = multiprocessing.Pool(self.cpu_num)
             pool.map(inner_process, self.args)
+            sh.cat(self.out_files, _out=self.outfile)
+            sh.rm('-rf', self.in_files)
+            sh.rm('-rf', self.out_files)
 
     def load_stem(self):
         # load stems
