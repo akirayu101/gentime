@@ -65,6 +65,15 @@ def step4():
                 mid_datadir + lang + '/' + 'step4_' + file_suffix)
 
 
+def step5():
+    for lang in langset:
+            logging.info('Step 5: recall calc lang:%s', lang)
+            process = processor.simple_processor_factory(lang, 'recall')
+            process.process(
+                mid_datadir + lang + '/' + 'step4_' + file_suffix,
+                mid_datadir + lang + '/' + 'step5_' + file_suffix)
+
+
 def main():
     clean_mid_data()
     clean_final_data()
@@ -73,6 +82,7 @@ def main():
     step2()
     step3()
     step4()
+    step5()
 
 if __name__ == "__main__":
     main()

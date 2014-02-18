@@ -89,7 +89,7 @@ class general_processor():
                     else:
                         noqueryfile.write(line.strip() + '\n')
 
-        elif self.pro_type == 'block':
+        elif self.pro_type in ['block', 'recall']:
             if len(self.operators):
                 self.operators[0](self.infile, self.outfile)
         elif self.pro_type == 'analysis':
@@ -169,4 +169,6 @@ def simple_processor_factory(lang, instance_type):
         proto_processor.add_operator(operators.analysis_stem_operator)
     if instance_type == 'stem':
         proto_processor.add_operator(operators.stem_recall_operator)
+    if instance_type == 'recall':
+        proto_processor.add_operator(operators.recall_output_operator)
     return processor_impl(proto_processor)

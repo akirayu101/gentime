@@ -140,3 +140,24 @@ def stem_recall_operator(text, lang, stems):
         return False, text
     except ValueError:
         return False, text
+
+
+def recall_output_operator(infile, outfile):
+    recall_dict = {}
+    with open(infile) as inf, open(outfile, 'wb') as of:
+        for line in inf:
+            text = line.strip().split('\t')
+            recall_dict.setdefault(text[0], [text[1], 0])
+            recall_dict[text[0]][1] += int(text[2])
+        for k, v in recall_dict.items():
+            strength = 0
+            if v[1] > 50:
+                strength = 3
+            elif v[1] > 10:
+                strength = 2
+            elif v[1] > 5:
+                strength = 1
+            else:
+                pass
+            if strength > 0:
+                of.write(k + '\t' + '\t'.join([v[0], str(strength)]) + '\n')
