@@ -17,7 +17,7 @@ def file_names(DIR):
 
 
 def clean_mid_data():
-    stepnames = ['step' + str(i) + '_' + file_suffix for i in range(1, 5)]
+    stepnames = ['step' + str(i) + '_' + file_suffix for i in range(1, 7)]
     for lang in langset:
         for stepname in stepnames:
             sh.rm('-rf', mid_datadir + lang + '/' + stepname)
@@ -74,6 +74,17 @@ def step5():
                 mid_datadir + lang + '/' + 'step5_' + file_suffix)
 
 
+def step6():
+    for lang in langset:
+            logging.info('Step 6: dictgen lang:%s', lang)
+            process = processor.simple_processor_factory(lang, 'dictgen')
+            infiles = [
+                mid_datadir + lang + '/' + 'step3_' + file_suffix,
+                mid_datadir + lang + '/' + 'step5_' + file_suffix]
+            outfile = mid_datadir + lang + '/' + 'step6_' + file_suffix
+            process.process(infiles, outfile)
+
+
 def main():
     clean_mid_data()
     clean_final_data()
@@ -83,6 +94,7 @@ def main():
     step3()
     step4()
     step5()
+    step6()
 
 if __name__ == "__main__":
     main()
