@@ -95,6 +95,7 @@ def main():
     step4()
     step5()
     step6()
+    logging.info('All Done')
 
 if __name__ == "__main__":
     main()

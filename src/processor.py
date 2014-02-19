@@ -128,7 +128,6 @@ class general_processor():
             sh.rm('-rf', self.in_files)
             sh.rm('-rf', self.out_files)
         elif self.pro_type == 'dictgen':
-            print self.infile, self.outfile
             tmp1 = mid_datadir + self.lang + '/temp1'
             tmp2 = mid_datadir + self.lang + '/temp2'
             tmp3 = mid_datadir + self.lang + '/temp3'
@@ -141,7 +140,7 @@ class general_processor():
                         '\t'.join([text[0], gentime_type[text[1]], text[2], '0', '\n']))
             sh.iconv('-f', 'utf8', '-t', 'gb18030', tmp2, _out=tmp3)
             sh.create_binary_dset(
-                '-n', 'temp3', '-N', 'gentime_dict', '-p', mid_datadir +
+                '-n', 'temp3', '-N', 'fanshixiao_acdict', '-p', mid_datadir +
                 self.lang + '/',
                 '-P', dict_dir + self.lang + '/', '-f', '%z%d%d%d', '-k', '0', '-t', '1', '-m', '10000000')
             sh.rm('-rf', [tmp1, tmp2, tmp3])
