@@ -139,7 +139,7 @@ class general_processor():
                     outf.write(
                         '\t'.join([text[0], gentime_type[text[1]], text[2], '0', '\n']))
             sh.iconv('-f', 'utf8', '-t', 'gb18030', tmp2, _out=tmp3)
-            sh.create_binary_dset(
+            sh.createbin(
                 '-n', 'temp3', '-N', 'fanshixiao_acdict', '-p', mid_datadir +
                 self.lang + '/',
                 '-P', dict_dir + self.lang + '/', '-f', '%z%d%d%d', '-k', '0', '-t', '1', '-m', '10000000')
