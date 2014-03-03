@@ -146,7 +146,7 @@ class analyser:
             stem_strength = 1
 
         # here we write to stem file
-        if not filter_stem(self.stem) and stem_strength > 2:
+        if not filter_stem(self.stem, self.lang) and stem_strength > 2:
             with open(final_datadir + self.lang + '/' + 'stem_' + file_suffix, 'ab') as f:
                 f.write(
                     '\t'.join([self.stem, stem_type, str(stem_strength)]) + '\n')
@@ -166,7 +166,7 @@ class analyser:
 #ana = analyser('pt', text.text)
 # ana.add_analyze_processor(debug_processor)
 # print ana.process()
-def filter_stem(stem):
+def filter_stem(stem, lang):
     if len(stem) < 4:
         return True
     elif 'www' in stem:
@@ -178,4 +178,8 @@ def filter_stem(stem):
     elif len(stem.strip()) > 128:
         return True
     else:
+        stem_filter_words = getattr(process_dict, lang + "_stem_filter_dict")
+        for word in stem_filter_words:
+            if word in stem:
+                return True
         return False

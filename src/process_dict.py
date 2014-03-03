@@ -26,3 +26,11 @@ pt_thisyear_dict = ['deste ano']
 eg_punish_dict = [':']
 th_punish_dict = [':']
 pt_punish_dict = [':']
+
+
+eg_stem_filter_dict = [
+    "اغنيه", "كيفية", "رقص", "اغانى", "طريقة", "كيف", "lyric", "جنس", "مسلسلات", "ديكور", "مهرجانات", "مهرجان", "لعبة",
+    "سكس", "mp3", "صور", "برنامج", "حلقة", "العاب", "مسلسل", "اغنية", "فيلم", "اغاني", "فيديوهات", "لعبة", "افلام", "موقع", "فيديو", "تحميل", "نيك"]
+pt_stem_filter_dict = ["jogos", "imagens", "mp3",
+                       "film", "video", "ouvir", "musica", "facebook", "site"]
+th_stem_filter_dict = ["เกม", "เพลง", "หนัง", "คลิป"]

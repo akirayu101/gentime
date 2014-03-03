@@ -19,9 +19,7 @@ def file_names(DIR):
 def clean_mid_data():
     stepnames = ['step' + str(i) + '_' + file_suffix for i in range(1, 7)]
     for lang in langset:
-        for stepname in stepnames:
-            sh.rm('-rf', mid_datadir + lang + '/' + stepname)
-        sh.rm('-rf', mid_datadir + lang + '/' + 'noquerys_' + file_suffix)
+        sh.rm('-rf', sh.glob(mid_datadir + lang + '/*'))
 
 
 def clean_final_data():
