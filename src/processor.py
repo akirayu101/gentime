@@ -137,7 +137,7 @@ class general_processor():
                 for line in inf:
                     text = line.strip().split('\t')
                     outf.write(
-                        '\t'.join([text[0], gentime_type[text[1]], text[2], '0', '\n']))
+                        '\t'.join([text[0], gentime_type[text[1]][0], text[2], gentime_type[text[1]][1], '\n']))
             sh.iconv('-f', 'utf8', '-t', 'gb18030', tmp2, _out=tmp3)
             sh.createbin(
                 '-n', 'temp3', '-N', 'fanshixiao_acdict', '-p', mid_datadir +

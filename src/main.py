@@ -24,7 +24,7 @@ def clean_mid_data():
 
 def clean_final_data():
     for lang in langset:
-        sh.rm('-rf', final_datadir + lang + '/' + 'stem_' + file_suffix)
+        sh.rm('-rf', sh.glob(final_datadir + lang + '/' + '*'))
 
 
 def step1():

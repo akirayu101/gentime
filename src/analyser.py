@@ -120,7 +120,7 @@ class analyser:
         for word in thisyear_dict:
             if word in query:
                 return self.this_year
-        return 'year'
+        return '2014'
 
     # TODO
     def gen_output(self):
@@ -146,7 +146,7 @@ class analyser:
             stem_strength = 1
 
         # here we write to stem file
-        if not filter_stem(self.stem, self.lang) and stem_strength > 2:
+        if not filter_stem(self.stem, self.lang) and stem_strength > getattr(process_dict, self.lang + "_stem_thresh"):
             with open(final_datadir + self.lang + '/' + 'stem_' + file_suffix, 'ab') as f:
                 f.write(
                     '\t'.join([self.stem, stem_type, str(stem_strength)]) + '\n')
@@ -174,6 +174,8 @@ def filter_stem(stem, lang):
     elif '.com' in stem:
         return True
     elif len(stem.strip().split(' ')) == 1 and stem.strip().isalpha():
+        return True
+    elif len(stem.strip()) < getattr(process_dict, lang + "_stem_min_len"):
         return True
     elif len(stem.strip()) > 128:
         return True
