@@ -189,4 +189,5 @@ def simple_processor_factory(lang, instance_type):
         proto_processor.add_operator(operators.stem_recall_operator)
     if instance_type == 'recall':
         proto_processor.add_operator(operators.recall_output_operator)
+    # dict gen type need no specific operator
     return processor_impl(proto_processor)

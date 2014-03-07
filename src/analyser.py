@@ -120,7 +120,9 @@ class analyser:
         for word in thisyear_dict:
             if word in query:
                 return self.this_year
-        return '2014'
+        if self.last_year in query:
+                return self.last_year
+        return 'year'
 
     # TODO
     def gen_output(self):
