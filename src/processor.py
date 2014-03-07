@@ -143,7 +143,8 @@ class general_processor():
                 '-n', 'temp3', '-N', 'fanshixiao_acdict', '-p', mid_datadir +
                 self.lang + '/',
                 '-P', dict_dir + self.lang + '/', '-f', '%z%d%d%d', '-k', '0', '-t', '1', '-m', '10000000')
-            sh.rm('-rf', [tmp1, tmp2, tmp3])
+            sh.rm('-rf', [tmp3, tmp1])
+            sh.mv(tmp2, self.outfile)
 
     def load_stem(self):
         # load stems
